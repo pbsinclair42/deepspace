@@ -1,47 +1,64 @@
-storyFadeLength = 5000;
+var storyFadeLength = 5000;
 
-taskLengths = {'remember':10}
+var taskLengths = {'remember':10, 'feel':20}
 
-messageHistory = []
+var messageHistory = []
 
-memoryCount = 0
+var memoryCount = 0
 
-allTasksToAdd = [
-    "<div class='task' id='remember'>Try to <br>remember</div>"
+var allTasksToAdd = [
+    ['remember',"<div class='task fadeIn' id='remember'>Try to <br>remember</div>"],
+    ['feel',"<div class='task fadeIn' id='feel'>Try to <br>feel</div>"]
 ]
 
 function addNextTask(){
-    task = allTasksToAdd.shift()
-    $('#tasks').append(task)
-    
+    var task = allTasksToAdd.shift()
+    $('#tasks').append(task[1])    
     
     $('#remember').click(function(){
         if ( ! $(this).hasClass('waiting') ){
             if (memoryCount == 0){
                 nextStoryline(['You remember... something.'])
                 $('#memory').css('opacity', '1')
+            } else if (memoryCount == 3){
+                nextStoryline(["You remember how to feel."])
+                addNextTask();
             } else if (memoryCount < 20){
                 nextStoryline(['You feel your memory improve.'])
+                $('#memory').css('height', 50+10*memoryCount)
             }
             memoryCount++;
         }
     })
     
+    $('#feel').click(function(){
+        if ( ! $(this).hasClass('waiting') ){
+            $('#tasks').css('opacity', 0);
+            nextStoryline(['You feel...'], function(){
+                setCookie('rfnm', 1, 1000);
+                nextStoryline(['pain']);
+                setTimeout(function(){$('body').addClass('shake');
+                setTimeout(function(){location.reload();}, 2000);},2000);
+            })
+        }
+    })
+
     $('.task').click(function(){
-        task = $(this)
+        var task = $(this)
+        task.removeClass('fadeIn')
         if ( ! task.hasClass('waiting') ){
             task.addClass('waiting');
             task.css('animation-duration',taskLengths[task.attr('id')]+'s')
             setTimeout(function(){
                 task.removeClass('waiting');
-            }, taskLengths['remember']*1000)
+            }, taskLengths[task.attr('id')]*1000)
         }
     })
 }
 
 function nextStoryline(lines, callback){
-    s = $(".story");
-    nextLine = lines.shift()
+    var s = $(".story");
+    var nextLine = lines.shift()
     s.html(nextLine);
     
     messageHistory.unshift(nextLine);
@@ -72,3 +89,28 @@ $(document).ready(function(){
     })
 })
 
+
+
+
+
+
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+ d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length,c.length);
+        }
+    }
+    return "";
+}
