@@ -24,6 +24,7 @@ body {
   height: 50px;
   opacity: 0;
   transition: opacity 2s;
+  -webkit-mask-image: -webkit-gradient(linear, left top, left bottom, from(#000000), to(rgba(0, 0, 0, 0)));
 }
 #memory .memoryTitle {
   font-weight: bold;
