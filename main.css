@@ -126,6 +126,7 @@ body {
   font-size: 20;
   padding: 25% 25%;
   cursor: auto;
+  display: none;
 }
 .shake {
   transform-origin: center center;

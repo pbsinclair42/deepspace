@@ -21,7 +21,7 @@ function addNextTask(task){
                     nextStoryline(['You remember... something.', "You've been here before."])
                     memoryCount++;
                 } else{
-                    nextStoryline(['You remember... something.'])
+                    nextStoryline(['You remember... nothing.', "Nothing before this anyway."])
                 }
                 $('#memory').css('opacity', '1')
             } else if (memoryCount == 2){
@@ -47,7 +47,7 @@ function addNextTask(task){
                 nextStoryline(["You remember nothing more..."])
             }
             memoryCount++;
-            $('#memory').css('height', 50+25*memoryCount)
+            $('#memory').css('height', 50+30*memoryCount)
         }
     });
 
@@ -59,16 +59,19 @@ function addNextTask(task){
                 nextStoryline(['You feel...'], function(){
                     setCookie('rfnm', 2, 1000);
                     nextStoryline(['pain.']);
-                    setTimeout(function(){$('body').addClass('shake');
                     setTimeout(function(){
-                        $('body').removeClass('shake');
-                        nextStoryline(['Wait.', "You've been here before too.", "What does this mean?", "What does any of this mean?"], function(){
-                            $('.task').removeClass('disabled');
-                            $('#tasks').css('opacity', 1);
-                            addNextTask('feel');
-                            addNextTask('escape');
-                        })
-                    }, 2000);},2000);
+                        $('body').addClass('shake');
+                        $('#crumble')[0].play();
+                        setTimeout(function(){
+                            $('body').removeClass('shake');
+                            nextStoryline(['Wait.', "You've been here before too.", "What does this mean?", "What does any of this mean?"], function(){
+                                $('.task').removeClass('disabled');
+                                $('#tasks').css('opacity', 1);
+                                addNextTask('feel');
+                                addNextTask('escape');
+                            })
+                        }, 1700);
+                    },2000);
                 })
                 loved = true
             } else {
@@ -90,11 +93,8 @@ function addNextTask(task){
     })
     
     $('#feel').click(function(){
-        console.log('felt')
         if ( ! $(this).hasClass('disabled') ){
-            console.log('enabled')
             if (! loved){
-                console.log('not loved)')
                 $('#tasks').addClass('disabled')
                 $('#tasks').css('opacity', 0);
                 nextStoryline(['You feel...'], function(){
@@ -105,14 +105,16 @@ function addNextTask(task){
                         setCookie('rfnm', 1, 1000);
                     }
                     nextStoryline(['pain.']);
-                    setTimeout(function(){$('body').addClass('shake');
                     setTimeout(function(){
-                        $('body').empty();
-                        setTimeout(function(){location.reload();},500)
-                    }, 1000);},2000);
+                        $('body').addClass('shake');
+                        $('#crumble')[0].play();
+                        setTimeout(function(){
+                            $('body').empty();
+                            setTimeout(function(){location.reload();},500)
+                        }, 1000);
+                    },2000);
                 })
             } else {
-                console.log('lvod)')
                 nextStoryline(["You feel...", "nothing."])
             }
         }
@@ -141,6 +143,7 @@ function addNextTask(task){
                         $('#stories').remove()
                         $('#memory').remove()
                         $('#tasks').remove()
+                        $('#credits').show()
                         $('#credits').css('opacity',1)
                     }, 12000)
                 }, 2000)
@@ -204,6 +207,7 @@ function updateMemory(){
 }
 
 $(document).ready(function(){
+    $('#crumble')[0].volume = 0.5
     nextStoryline(['You wake up.', 'You are in darkness.'], function(){
         addNextTask('remember')
     })
