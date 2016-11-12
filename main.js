@@ -2,9 +2,16 @@ storyFadeLength = 5000;
 
 taskLengths = {'remember':10}
 
+messageHistory = []
+
 function nextStoryline(lines){
     s = $(".story");
-    s.html(lines.shift());
+    nextLine = lines.shift()
+    s.html(nextLine);
+    
+    messageHistory.unshift(nextLine);
+    updateMemory()    
+    
     s.css('animation-name', 'none')
     setTimeout(function(){s.css('animation-name', 'storyAnimation')},10)
     if (lines.length > 0){
@@ -15,6 +22,10 @@ function nextStoryline(lines){
         setTimeout(function(){
         }, storyFadeLength)
     }
+}
+
+function updateMemory(){
+    $('#memory .messages').html(messageHistory.join('<br>'))
 }
 
 $(document).ready(function(){

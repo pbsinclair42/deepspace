@@ -16,9 +16,22 @@ body{
     margin: 0px;
 }
 
-.menu{
-    position: fixed;
-    color:grey;
+#memory{
+    border: grey 1px solid;
+    padding: 5px;
+    margin: 5px;
+    width: 20%;
+    border-radius: 4px;
+    text-align: center;
+    overflow: hidden;
+    
+    height:50px; //increases over time
+    
+    .memoryTitle{
+        font-weight: bold;
+        margin-bottom: 5px;
+        font-size: 18px;
+    }
 }
 
 #tasks{
@@ -52,22 +65,22 @@ body{
     }
 }
 
-.stories{
+#stories{
     width:100%;
     height:80%;
     display: flex;
     justify-content: center;
     align-items: center;
     position: fixed;
-}
 
-.story{
-    position: fixed;
-    text-align: center;
-    font-size: 40px;
-    animation-duration: @storyFadeLength;
-    color:black;
-    cursor:default;
+    .story{
+        position: fixed;
+        text-align: center;
+        font-size: 40px;
+        animation-duration: @storyFadeLength;
+        color:black;
+        cursor:default;
+    }
 }
 
 @keyframes storyAnimation {
