@@ -160,6 +160,7 @@ function addNextTask(task){
             nextStoryline(['You remembered too much.', 'You remembered the pain.', "You don't any more."], function(){
                 $('#feel').remove()
                 $('#forget').remove()
+                $('.task').removeClass('disabled')
                 $('#tasks').css('opacity', 1);
             })
         }
