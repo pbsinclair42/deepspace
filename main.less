@@ -59,6 +59,14 @@ body{
         height: 50px;        
         width: 100px;
         
+        &.disabled{
+            cursor: default;
+            
+            &:hover{
+                background-color: black;
+            }
+        }
+        
         &:hover{
             background-color: #222;
         }
@@ -135,8 +143,8 @@ body{
 }
 
 #credits {
-    transition: opacity 4s;
     opacity: 0;
+    transition: opacity 4s;
     color: grey;
     text-align: center;
     font-size: 20;

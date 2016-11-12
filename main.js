@@ -15,7 +15,7 @@ function addNextTask(task){
     $('#tasks').append("<div class='task fadeIn' id='"+task+"'>Try to <br>"+task+"</div>")    
     
     $('#remember').click(function(){
-        if ( ! $(this).hasClass('disabled') ){
+        if ( ! $(this).hasClass('disabled') && ! $(this).hasClass('waiting') ){
             if (memoryCount == 0){
                 if (getCookie('rfnm')){
                     nextStoryline(['You remember... something.', "You've been here before."])
@@ -52,7 +52,7 @@ function addNextTask(task){
     });
 
     $('#love').click(function(){
-        if ( ! $(this).hasClass('disabled') ){
+        if ( ! $(this).hasClass('disabled') && ! $(this).hasClass('waiting') ){
             if (! loved){
                 $('.task').addClass('disabled')
                 $('#tasks').css('opacity', 0);
@@ -81,7 +81,7 @@ function addNextTask(task){
     })
 
     $('#escape').click(function(){
-        if ( ! $(this).hasClass('disabled') ){
+        if ( ! $(this).hasClass('disabled') && ! $(this).hasClass('waiting') ){
             $('.task').addClass('disabled')
             $('#tasks').css('opacity', 0);
             nextStoryline(['Escape?', 'Escape from where?', 'Escape from what?', "You'll never escape from yourself."], function(){
@@ -93,9 +93,9 @@ function addNextTask(task){
     })
     
     $('#feel').click(function(){
-        if ( ! $(this).hasClass('disabled') ){
+        if ( ! $(this).hasClass('disabled') && ! $(this).hasClass('waiting') ){
             if (! loved){
-                $('#tasks').addClass('disabled')
+                $('.task').addClass('disabled')
                 $('#tasks').css('opacity', 0);
                 nextStoryline(['You feel...'], function(){
 
@@ -121,7 +121,7 @@ function addNextTask(task){
     })
     
     $('#awaken').click(function(){
-        if ( ! $(this).hasClass('disabled') ){
+        if ( ! $(this).hasClass('disabled') && ! $(this).hasClass('waiting') ){
             $('.task').addClass('disabled')
             $('#tasks').css('opacity', 0);
             nextStoryline(['You awake to find yourself in your bed.', 'You remember... a dream.', "You remember...", "it felt...", "deep.", "Or maybe just stupid and pretentious, you're not sure.", "Either way, it'll make a great story for your instagram.", '"What is love but pain? #deep "', '"We can escape from anything, but we can never escape from ourselves. #deep "', '"Is love an emotion, or is it something more? #deep "'], function(){
@@ -143,8 +143,8 @@ function addNextTask(task){
                         $('#stories').remove()
                         $('#memory').remove()
                         $('#tasks').remove()
-                        $('#credits').show()
-                        $('#credits').css('opacity',1)
+                        $('#credits').css('display','block')
+                        setTimeout(function(){$('#credits').css('opacity',1)},50)
                     }, 12000)
                 }, 2000)
             });
@@ -152,28 +152,27 @@ function addNextTask(task){
     })
 
     $('#forget').click(function(){
-        if ( ! $(this).hasClass('disabled') ){
+        if ( ! $(this).hasClass('disabled') && ! $(this).hasClass('waiting') ){
             messageHistory = []
+            $('.task').addClass('disabled')
+            $('#tasks').css('opacity', 0);
+            forgotten = true;
             nextStoryline(['You remembered too much.', 'You remembered the pain.', "You don't any more."], function(){
                 $('#feel').remove()
                 $('#forget').remove()
                 $('#tasks').css('opacity', 1);
             })
-            $('#tasks').css('opacity', 0);
-            forgotten = true;
         }
     })
     
     $('.task').click(function(){
         var task = $(this)
         task.removeClass('fadeIn')
-        if ( ! task.hasClass('disabled') ){
+        if ( ! task.hasClass('disabled') && ! $(this).hasClass('waiting') ){
             task.addClass('waiting');
-            task.addClass('disabled');
             task.css('animation-duration',taskLengths[task.attr('id')]+'s')
             setTimeout(function(){
                 task.removeClass('waiting');
-                task.removeClass('disabled');
             }, taskLengths[task.attr('id')]*1000)
         }
     })
