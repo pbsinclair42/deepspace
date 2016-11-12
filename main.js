@@ -130,6 +130,19 @@ function addNextTask(task){
                     $('.story').css("text-shadow", "0px 0px 8px #fff");
                     $('.story').css("animation", "none");
                     setCookie('rfnm', 0, -1);
+                    setTimeout(function(){
+                        $('#memory').css('opacity',0)
+                    }, 3000)
+                    setTimeout(function(){
+                        $('#stories').css('transition','opacity 2s')
+                        $('#stories').css('opacity',0)
+                    }, 8000)
+                    setTimeout(function(){
+                        $('#stories').remove()
+                        $('#memory').remove()
+                        $('#tasks').remove()
+                        $('#credits').css('opacity',1)
+                    }, 12000)
                 }, 2000)
             });
         }
