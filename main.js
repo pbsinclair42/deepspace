@@ -1,19 +1,15 @@
 var storyFadeLength = 5000;
 
-var taskLengths = {'remember':10, 'feel':20, 'forget':15}
+var taskLengths = {'remember':10, 'feel':20, 'forget':15, 'love':13, 'escape':25, 'awaken':40}
 
 var messageHistory = []
 
 var memoryCount = 0
 
-var allTasksToAdd = [
-    ['remember',"<div class='task fadeIn' id='remember'>Try to <br>remember</div>"],
-    ['feel',"<div class='task fadeIn' id='feel'>Try to <br>feel</div>"],
-    ['forget',"<div class='task fadeIn' id='forget'>Try to <br>forget</div>"]
-    
-]
-
 var forgotten = false;
+var loved = false;
+var escaped = false;
+var lovedtwice = false;
 
 function addNextTask(task){
     $('#tasks').append("<div class='task fadeIn' id='"+task+"'>Try to <br>"+task+"</div>")    
@@ -23,6 +19,7 @@ function addNextTask(task){
             if (memoryCount == 0){
                 if (getCookie('rfnm')){
                     nextStoryline(['You remember... something.', "You've been here before."])
+                    memoryCount++;
                 } else{
                     nextStoryline(['You remember... something.'])
                 }
@@ -37,50 +34,104 @@ function addNextTask(task){
                 nextStoryline(['You remember how to love.'])
                 forgotten=false
                 addNextTask('love')
-            } else if (memoryCount < 10){
+            } else if (escaped & lovedtwice){
+                nextStoryline(["You remember how to awaken"])
+                addNextTask("awaken")
+                lovedtwice = false
+            } else if (loved & memoryCount >= 4){
+                nextStoryline(["...was love an emotion?  Or was it something more?"])
+                lovedtwice=true
+            } else if (memoryCount < 8){
                 nextStoryline(['You feel your memory improve.'])
             } else {
                 nextStoryline(["You remember nothing more..."])
             }
             memoryCount++;
-            $('#memory').css('height', 50+15*memoryCount)
+            $('#memory').css('height', 50+25*memoryCount)
         }
     });
 
     $('#love').click(function(){
         if ( ! $(this).hasClass('disabled') ){
-            $('#task').addClass('disabled')
+            if (! loved){
+                $('.task').addClass('disabled')
+                $('#tasks').css('opacity', 0);
+                nextStoryline(['You feel...'], function(){
+                    setCookie('rfnm', 2, 1000);
+                    nextStoryline(['pain.']);
+                    setTimeout(function(){$('body').addClass('shake');
+                    setTimeout(function(){
+                        $('body').removeClass('shake');
+                        nextStoryline(['Wait.', "You've been here before too.", "What does this mean?", "What does any of this mean?"], function(){
+                            $('.task').removeClass('disabled');
+                            $('#tasks').css('opacity', 1);
+                            addNextTask('feel');
+                            addNextTask('escape');
+                        })
+                    }, 2000);},2000);
+                })
+                loved = true
+            } else {
+                nextStoryline(['But what even is love?']);
+            }
+        }
+    })
+
+    $('#escape').click(function(){
+        if ( ! $(this).hasClass('disabled') ){
+            $('.task').addClass('disabled')
             $('#tasks').css('opacity', 0);
-            nextStoryline(['You feel...'], function(){
-                setCookie('rfnm', 2, 1000);
-                nextStoryline(['pain.']);
-                setTimeout(function(){$('body').addClass('shake');
-                setTimeout(function(){
-                    $('body').removeClass('shake');
-                    nextStoryline(['Wait.', "You've been here before too.", "What does this mean?", "What does any of this mean?"], function(){
-                        $('#task').removeClass('disabled');
-                        $('#tasks').css('opacity', 1);
-                    })
-                }, 2000);},2000);
-            })
+            nextStoryline(['Escape?', 'Escape from where?', 'Escape from what?', "You'll never escape from yourself."], function(){
+                $('.task').removeClass('disabled');
+                $('#tasks').css('opacity', 1);
+                escaped = true;
+            });
         }
     })
     
     $('#feel').click(function(){
+        console.log('felt')
         if ( ! $(this).hasClass('disabled') ){
-            $('#tasks').addClass('disabled')
+            console.log('enabled')
+            if (! loved){
+                console.log('not loved)')
+                $('#tasks').addClass('disabled')
+                $('#tasks').css('opacity', 0);
+                nextStoryline(['You feel...'], function(){
+
+                    if (getCookie('rfnm')){
+                        setCookie('rfnm', 2, 1000);
+                    } else{
+                        setCookie('rfnm', 1, 1000);
+                    }
+                    nextStoryline(['pain.']);
+                    setTimeout(function(){$('body').addClass('shake');
+                    setTimeout(function(){
+                        $('body').empty();
+                        setTimeout(function(){location.reload();},500)
+                    }, 1000);},2000);
+                })
+            } else {
+                console.log('lvod)')
+                nextStoryline(["You feel...", "nothing."])
+            }
+        }
+    })
+    
+    $('#awaken').click(function(){
+        if ( ! $(this).hasClass('disabled') ){
+            $('.task').addClass('disabled')
             $('#tasks').css('opacity', 0);
-            nextStoryline(['You feel...'], function(){
-                
-                if (getCookie('rfnm')){
-                    setCookie('rfnm', 2, 1000);
-                } else{
-                    setCookie('rfnm', 1, 1000);
-                }
-                nextStoryline(['pain.']);
-                setTimeout(function(){$('body').addClass('shake');
-                setTimeout(function(){location.reload();}, 1500);},2000);
-            })
+            nextStoryline(['You awake to find yourself in your bed.', 'You remember... a dream.', "You remember...", "it felt...", "deep.", "Or maybe just stupid and pretentious, you're not sure.", "Either way, it'll make a great story for your instagram.", '"What is love but pain? #deep "', '"We can escape from anything, but we can never escape from ourselves. #deep "', '"Is love an emotion, or is it something more? #deep "'], function(){
+                nextStoryline(['"#deep "'])
+                setTimeout(function(){
+                    $('.story').css("opacity", 1)
+                    $('.story').css("transform", "scale(1.0)")
+                    $('.story').css("text-shadow", "0px 0px 8px #fff");
+                    $('.story').css("animation", "none");
+                    setCookie('rfnm', 0, -1);
+                }, 2000)
+            });
         }
     })
 
@@ -88,8 +139,8 @@ function addNextTask(task){
         if ( ! $(this).hasClass('disabled') ){
             messageHistory = []
             nextStoryline(['You remembered too much.', 'You remembered the pain.', "You don't any more."], function(){
-                $('#feel').hide()
-                $('#forget').hide()
+                $('#feel').remove()
+                $('#forget').remove()
                 $('#tasks').css('opacity', 1);
             })
             $('#tasks').css('opacity', 0);
